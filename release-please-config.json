@@ -1,0 +1,30 @@
+{
+  "plugins": [
+    "cargo-workspace"
+  ],
+  "packages": {
+    ".": {
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "rust",
+      "bump-minor-pre-major": false,
+      "bump-patch-for-minor-pre-major": false,
+      "draft": false,
+      "prerelease": false,
+      "exclude-paths": [
+        "homehub-server",
+        "homehub-core",
+        "homehub-models"
+      ]
+    },
+    "homehub-server": {
+      "release-type": "rust"
+    },
+    "homehub-core": {
+      "release-type": "rust"
+    },
+    "homehub-models": {
+      "release-type": "rust"
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}

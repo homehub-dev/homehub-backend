@@ -2,3 +2,4 @@
 
 members = ["homehub-server", "homehub-core", "homehub-models"]
 resolver = "2"
+name = "homehub"
