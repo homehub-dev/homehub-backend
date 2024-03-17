@@ -1,4 +1,9 @@
 [workspace]
 
-members = ["homehub-server", "homehub-core", "homehub-models"]
+members = [
+  "homehub-server",
+  "homehub-core",
+  "homehub-db",
+  "homehub-db/migration",
+]
 resolver = "2"
