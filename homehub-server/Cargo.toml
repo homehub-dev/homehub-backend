@@ -5,6 +5,21 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
+tower-http = { version = "0.5.2", features = ["trace"] }
 homehub-db = { path = "../homehub-db" }
 tokio = { version = "1", features = ["full"] }
-axum = { version = "0.7.4" }
+axum = { version = "0.7.4", features = ["macros"] }
+tower = "0.4.13"
+tracing-subscriber = { version = "0.3.18", features = ["json"] }
+tracing = { version = "0.1.40", features = ["async-await"] }
+anyhow = "1.0.81"
+jsonwebtoken = "9.3.0"
+serde = { version = "1.0.130", features = ["derive"] }
+serde_json = "1.0.115"
+dotenvy = "0.15.7"
+base64 = "0.22.0"
+uuid = { version = "1.8.0", features = ["v4", "serde"] }
+chrono = { version = "0.4.37", features = ["serde"] }
+axum-extra = { version = "0.9.3", features = ["cookie"] }
+argon2 = "0.5.3"
+rand_core = { version = "0.6.4", features = ["getrandom"] }
