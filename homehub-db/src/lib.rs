@@ -1,10 +1,11 @@
 mod entities;
+pub use entities::prelude::*;
 pub use entities::*;
+use sea_orm::Database;
+pub use sea_orm::DatabaseConnection;
 
-use sea_orm::{Database, DatabaseConnection};
-
-pub async fn get_database() -> anyhow::Result<DatabaseConnection> {
-    let database_url = std::env::var("DATABASE_URL")?;
-    let database = Database::connect(&database_url).await?;
+pub async fn get_database(database_url: &str) -> anyhow::Result<DatabaseConnection> {
+    println!("Connecting to database: {}", database_url);
+    let database = Database::connect(database_url).await?;
     Ok(database)
 }

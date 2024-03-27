@@ -102,11 +102,11 @@ impl MigrationTrait for Migration {
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
             .drop_table(Table::drop().table(AppUser::Table).to_owned())
-            .await;
+            .await?;
 
         manager
             .drop_table(Table::drop().table(Room::Table).to_owned())
-            .await;
+            .await?;
 
         manager
             .drop_table(Table::drop().table(Location::Table).to_owned())
