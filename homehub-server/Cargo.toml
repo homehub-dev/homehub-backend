@@ -6,6 +6,7 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 tower-http = { version = "0.5.2", features = ["trace"] }
+homehub-core = { path = "../homehub-core" }
 homehub-db = { path = "../homehub-db" }
 tokio = { version = "1", features = ["full"] }
 axum = { version = "0.7.4", features = ["macros"] }

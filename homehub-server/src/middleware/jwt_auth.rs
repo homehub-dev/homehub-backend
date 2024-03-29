@@ -10,7 +10,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::{state::AppState, util::token};
+use crate::state::AppState;
 
 #[derive(Debug, Serialize)]
 pub struct ErrorResponse {
@@ -42,20 +42,21 @@ pub async fn auth(
         (StatusCode::UNAUTHORIZED, Json(error_response))
     })?;
 
-    let access_token =
-        match token::verify_jwt_token(data.config.access_token_public_key.to_owned(), access_token)
-        {
-            Ok(token) => token,
-            Err(_) => {
-                return Err((
-                    StatusCode::UNAUTHORIZED,
-                    Json(ErrorResponse {
-                        status: "error",
-                        message: "Unauthorized".to_owned(),
-                    }),
-                ))
-            }
-        };
+    let access_token = match homehub_core::token::verify_jwt_token(
+        data.config.access_token_public_key.to_owned(),
+        access_token,
+    ) {
+        Ok(token) => token,
+        Err(_) => {
+            return Err((
+                StatusCode::UNAUTHORIZED,
+                Json(ErrorResponse {
+                    status: "error",
+                    message: "Unauthorized".to_owned(),
+                }),
+            ))
+        }
+    };
 
     let user_id = access_token.user_id;
 

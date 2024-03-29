@@ -6,7 +6,6 @@ use anyhow::Result;
 use axum::{middleware as axum_middleware, response::IntoResponse, routing};
 use axum::{Json, Router};
 
-mod config;
 mod middleware;
 mod routes;
 mod state;
@@ -18,7 +17,7 @@ async fn main() -> Result<()> {
         .with(tracing_subscriber::fmt::layer())
         .init();
     dotenvy::dotenv()?;
-    let config = config::Config::from_env();
+    let config = homehub_core::config::Config::from_env();
     let db = homehub_db::get_database(config.database_url.as_str()).await?;
     let app_state = Arc::new(state::AppState { db, config });
 
@@ -32,10 +31,12 @@ async fn main() -> Result<()> {
         )
         .route(
             "/user",
-            routing::get(routes::user::get_me).route_layer(axum_middleware::from_fn_with_state(
-                app_state.clone(),
-                middleware::jwt_auth::auth,
-            )),
+            routing::get(routes::user::get_me).route_layer(
+                axum_middleware::from_fn_with_state(
+                    app_state.clone(),
+                    middleware::jwt_auth::auth,
+                ),
+            ),
         )
         .layer(TraceLayer::new_for_http())
         .with_state(app_state);
