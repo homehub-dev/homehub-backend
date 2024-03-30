@@ -1,4 +1,4 @@
-use homehub_db::{app_user::FilteredAppUserModel, DatabaseConnection};
+use homehub_db::{queries::app_user::FilteredAppUserModel, DatabaseConnection};
 
 use argon2::{
     password_hash::SaltString, Argon2, PasswordHash, PasswordHasher,
@@ -31,14 +31,14 @@ pub async fn register_user(
         .map_err(|_| RegisterUserError::CouldNotHashError)?;
 
     if let Ok(Some(_)) =
-        homehub_db::app_user::find_user_by_email(email, db).await
+        homehub_db::queries::app_user::find_user_by_email(email, db).await
     {
         return Err(RegisterUserError::UserAlreadyExists {
             email: email.to_string(),
         });
     };
 
-    let user = homehub_db::app_user::create_user(
+    let user = homehub_db::queries::app_user::create_user(
         name,
         email,
         &password_hash,
@@ -74,7 +74,7 @@ pub async fn login_user(
     password: &str,
     config: &config::Config,
 ) -> Result<Tokens, LoginUserError> {
-    let user = homehub_db::app_user::find_user_by_email(email, db)
+    let user = homehub_db::queries::app_user::find_user_by_email(email, db)
         .await
         .map_err(LoginUserError::DbError)?
         .ok_or_else(|| LoginUserError::UserNotFoundError(email.to_string()))?;
@@ -105,7 +105,7 @@ pub async fn refresh_access_token(
 }
 
 fn generate_tokens(
-    user_id: i32,
+    user_id: uuid::Uuid,
     config: &config::Config,
 ) -> Result<Tokens, LoginUserError> {
     let access_token = crate::token::generate_jwt_token(
@@ -135,4 +135,11 @@ fn generate_tokens(
         }),
         Err(e) => Err(e),
     }
+}
+
+pub async fn find_by_id(
+    id: uuid::Uuid,
+    db: &DatabaseConnection,
+) -> anyhow::Result<Option<homehub_db::app_user::Model>> {
+    homehub_db::queries::app_user::find_by_id(id, db).await
 }

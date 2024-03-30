@@ -1,7 +1,9 @@
-use sea_orm_migration::sea_orm::Iterable;
+use sea_orm_migration::{
+    prelude::extension::postgres::Type, sea_orm::Iterable,
+};
 use sea_orm_migration::{prelude::*, sea_orm::EnumIter};
 
-use crate::m20240317_190601_create_base_schema::Room;
+use crate::m20240317_190601_create_base_schema::{GenerateUuid, Room};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -10,23 +12,33 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
+            .create_type(
+                Type::create()
+                    .as_enum(LightStateEnum)
+                    .values(LightStateVariants::iter())
+                    .to_owned(),
+            )
+            .await?;
+        manager
             .create_table(
                 Table::create()
                     .table(Light::Table)
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Light::Id)
-                            .integer()
+                            .uuid()
                             .not_null()
-                            .auto_increment()
+                            .default(SimpleExpr::FunctionCall(Func::cust(
+                                GenerateUuid,
+                            )))
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Light::Name).string().not_null())
                     .col(
                         ColumnDef::new(Light::State)
                             .enumeration(
-                                Alias::new("light_state"),
-                                LightState::iter(),
+                                LightStateEnum,
+                                LightStateVariants::iter(),
                             )
                             .not_null(),
                     )
@@ -39,10 +51,8 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(RoomLight::Table)
                     .if_not_exists()
-                    .col(ColumnDef::new(RoomLight::RoomId).integer().not_null())
-                    .col(
-                        ColumnDef::new(RoomLight::LightId).integer().not_null(),
-                    )
+                    .col(ColumnDef::new(RoomLight::RoomId).uuid().not_null())
+                    .col(ColumnDef::new(RoomLight::LightId).uuid().not_null())
                     .primary_key(
                         Index::create()
                             .col(RoomLight::RoomId)
@@ -84,9 +94,11 @@ enum Light {
     Name,
     State,
 }
+#[derive(DeriveIden)]
+struct LightStateEnum;
 
-#[derive(Iden, EnumIter)]
-pub enum LightState {
+#[derive(DeriveIden, EnumIter)]
+pub enum LightStateVariants {
     Off,
     On,
 }

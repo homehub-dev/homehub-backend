@@ -9,7 +9,7 @@ serde = "1"
 url = "*"
 tokio = "*"
 sea-orm = { version = "^0.12.0", features = [
-  "sqlx-sqlite",
+  "sqlx-postgres",
   "runtime-tokio-native-tls",
   "macros",
   "with-chrono",

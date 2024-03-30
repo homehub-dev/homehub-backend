@@ -1,5 +1,5 @@
 use axum::{http::StatusCode, response::IntoResponse, Extension, Json};
-use homehub_db::app_user::FilteredAppUserModel;
+use homehub_db::queries::app_user::FilteredAppUserModel;
 
 use crate::middleware::jwt_auth::JWTAuthMiddleware;
 
