@@ -20,18 +20,26 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(AppUser::Name).string().not_null())
                     .col(ColumnDef::new(AppUser::Email).string().not_null())
-                    .col(ColumnDef::new(AppUser::PasswordHash).string().not_null())
                     .col(
-                        ColumnDef::new(AppUser::CreatedAt)
-                            .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
+                        ColumnDef::new(AppUser::PasswordHash)
+                            .string()
+                            .not_null(),
                     )
                     .col(
-                        ColumnDef::new(AppUser::UpdatedAt)
-                            .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
+                        ColumnDef::new(AppUser::CreatedAt).timestamp().default(
+                            SimpleExpr::Keyword(Keyword::CurrentTimestamp),
+                        ),
                     )
-                    .col(ColumnDef::new(AppUser::Locale).string().default("en-GB"))
+                    .col(
+                        ColumnDef::new(AppUser::UpdatedAt).timestamp().default(
+                            SimpleExpr::Keyword(Keyword::CurrentTimestamp),
+                        ),
+                    )
+                    .col(
+                        ColumnDef::new(AppUser::Locale)
+                            .string()
+                            .default("en-GB"),
+                    )
                     .to_owned(),
             )
             .await;
@@ -52,12 +60,16 @@ impl MigrationTrait for Migration {
                     .col(
                         ColumnDef::new(Location::CreatedAt)
                             .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
+                            .default(SimpleExpr::Keyword(
+                                Keyword::CurrentTimestamp,
+                            )),
                     )
                     .col(
                         ColumnDef::new(Location::UpdatedAt)
                             .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
+                            .default(SimpleExpr::Keyword(
+                                Keyword::CurrentTimestamp,
+                            )),
                     )
                     .to_owned(),
             )
@@ -76,16 +88,12 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Room::Name).string().not_null())
-                    .col(
-                        ColumnDef::new(Room::CreatedAt)
-                            .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
-                    )
-                    .col(
-                        ColumnDef::new(Room::UpdatedAt)
-                            .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
-                    )
+                    .col(ColumnDef::new(Room::CreatedAt).timestamp().default(
+                        SimpleExpr::Keyword(Keyword::CurrentTimestamp),
+                    ))
+                    .col(ColumnDef::new(Room::UpdatedAt).timestamp().default(
+                        SimpleExpr::Keyword(Keyword::CurrentTimestamp),
+                    ))
                     .col(ColumnDef::new(Room::LocationId).integer().not_null())
                     .foreign_key(
                         ForeignKey::create()
@@ -136,7 +144,7 @@ enum Location {
 }
 
 #[derive(DeriveIden)]
-enum Room {
+pub enum Room {
     Table,
     Id,
     Name,
