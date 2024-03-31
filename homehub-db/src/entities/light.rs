@@ -3,37 +3,23 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
+pub use crate::extra_models::light::LightState;
+
 #[derive(
     Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize,
 )]
-#[sea_orm(table_name = "room")]
+#[sea_orm(table_name = "light")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub name: String,
-    pub created_at: Option<DateTime>,
-    pub updated_at: Option<DateTime>,
-    pub location_id: Uuid,
+    pub state: LightState,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(
-        belongs_to = "super::location::Entity",
-        from = "Column::LocationId",
-        to = "super::location::Column::Id",
-        on_update = "NoAction",
-        on_delete = "NoAction"
-    )]
-    Location,
     #[sea_orm(has_many = "super::room_light::Entity")]
     RoomLight,
-}
-
-impl Related<super::location::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Location.def()
-    }
 }
 
 impl Related<super::room_light::Entity> for Entity {
@@ -42,12 +28,12 @@ impl Related<super::room_light::Entity> for Entity {
     }
 }
 
-impl Related<super::light::Entity> for Entity {
+impl Related<super::room::Entity> for Entity {
     fn to() -> RelationDef {
-        super::room_light::Relation::Light.def()
+        super::room_light::Relation::Room.def()
     }
     fn via() -> Option<RelationDef> {
-        Some(super::room_light::Relation::Room.def().rev())
+        Some(super::room_light::Relation::Light.def().rev())
     }
 }
 

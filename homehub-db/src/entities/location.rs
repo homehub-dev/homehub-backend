@@ -3,14 +3,16 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
+#[derive(
+    Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize,
+)]
 #[sea_orm(table_name = "location")]
 pub struct Model {
-    #[sea_orm(primary_key)]
-    pub id: i32,
+    #[sea_orm(primary_key, auto_increment = false)]
+    pub id: Uuid,
     pub name: String,
-    pub created_at: Option<ChronoDateTimeUtc>,
-    pub updated_at: Option<ChronoDateTimeUtc>,
+    pub created_at: Option<DateTime>,
+    pub updated_at: Option<DateTime>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

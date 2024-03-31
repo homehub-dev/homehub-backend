@@ -13,25 +13,35 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(AppUser::Id)
-                            .integer()
+                            .uuid()
                             .not_null()
-                            .auto_increment()
+                            .default(SimpleExpr::FunctionCall(Func::cust(
+                                GenerateUuid,
+                            )))
                             .primary_key(),
                     )
                     .col(ColumnDef::new(AppUser::Name).string().not_null())
                     .col(ColumnDef::new(AppUser::Email).string().not_null())
-                    .col(ColumnDef::new(AppUser::PasswordHash).string().not_null())
                     .col(
-                        ColumnDef::new(AppUser::CreatedAt)
-                            .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
+                        ColumnDef::new(AppUser::PasswordHash)
+                            .string()
+                            .not_null(),
                     )
                     .col(
-                        ColumnDef::new(AppUser::UpdatedAt)
-                            .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
+                        ColumnDef::new(AppUser::CreatedAt).timestamp().default(
+                            SimpleExpr::Keyword(Keyword::CurrentTimestamp),
+                        ),
                     )
-                    .col(ColumnDef::new(AppUser::Locale).string().default("en-GB"))
+                    .col(
+                        ColumnDef::new(AppUser::UpdatedAt).timestamp().default(
+                            SimpleExpr::Keyword(Keyword::CurrentTimestamp),
+                        ),
+                    )
+                    .col(
+                        ColumnDef::new(AppUser::Locale)
+                            .string()
+                            .default("en-GB"),
+                    )
                     .to_owned(),
             )
             .await;
@@ -43,21 +53,27 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Location::Id)
-                            .integer()
+                            .uuid()
                             .not_null()
-                            .auto_increment()
+                            .default(SimpleExpr::FunctionCall(Func::cust(
+                                GenerateUuid,
+                            )))
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Location::Name).string().not_null())
                     .col(
                         ColumnDef::new(Location::CreatedAt)
                             .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
+                            .default(SimpleExpr::Keyword(
+                                Keyword::CurrentTimestamp,
+                            )),
                     )
                     .col(
                         ColumnDef::new(Location::UpdatedAt)
                             .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
+                            .default(SimpleExpr::Keyword(
+                                Keyword::CurrentTimestamp,
+                            )),
                     )
                     .to_owned(),
             )
@@ -70,23 +86,21 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Room::Id)
-                            .integer()
+                            .uuid()
                             .not_null()
-                            .auto_increment()
+                            .default(SimpleExpr::FunctionCall(Func::cust(
+                                GenerateUuid,
+                            )))
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Room::Name).string().not_null())
-                    .col(
-                        ColumnDef::new(Room::CreatedAt)
-                            .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
-                    )
-                    .col(
-                        ColumnDef::new(Room::UpdatedAt)
-                            .timestamp()
-                            .default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)),
-                    )
-                    .col(ColumnDef::new(Room::LocationId).integer().not_null())
+                    .col(ColumnDef::new(Room::CreatedAt).timestamp().default(
+                        SimpleExpr::Keyword(Keyword::CurrentTimestamp),
+                    ))
+                    .col(ColumnDef::new(Room::UpdatedAt).timestamp().default(
+                        SimpleExpr::Keyword(Keyword::CurrentTimestamp),
+                    ))
+                    .col(ColumnDef::new(Room::LocationId).uuid().not_null())
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_room_location")
@@ -136,11 +150,19 @@ enum Location {
 }
 
 #[derive(DeriveIden)]
-enum Room {
+pub enum Room {
     Table,
     Id,
     Name,
     CreatedAt,
     UpdatedAt,
     LocationId,
+}
+
+pub(crate) struct GenerateUuid;
+
+impl Iden for GenerateUuid {
+    fn unquoted(&self, s: &mut dyn std::fmt::Write) {
+        write!(s, "uuid_generate_v4").unwrap();
+    }
 }

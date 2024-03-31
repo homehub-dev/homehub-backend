@@ -60,7 +60,7 @@ pub async fn auth(
 
     let user_id = access_token.user_id;
 
-    let user = match homehub_db::app_user::find_by_id(user_id, &data.db).await {
+    let user = match homehub_core::user::find_by_id(user_id, &data.db).await {
         Ok(user) => match user {
             Some(user) => user,
             None => {

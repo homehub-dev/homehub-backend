@@ -3,5 +3,7 @@
 pub mod prelude;
 
 pub mod app_user;
+pub mod light;
 pub mod location;
 pub mod room;
+pub mod room_light;

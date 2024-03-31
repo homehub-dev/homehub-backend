@@ -1270,6 +1270,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "tracing",
+ "uuid",
 ]
 
 [[package]]
@@ -1279,6 +1280,7 @@ dependencies = [
  "anyhow",
  "sea-orm",
  "serde",
+ "serde_json",
  "tokio",
  "url",
 ]
