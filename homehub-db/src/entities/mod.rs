@@ -7,4 +7,3 @@ pub mod light;
 pub mod location;
 pub mod room;
 pub mod room_light;
-pub mod sea_orm_active_enums;

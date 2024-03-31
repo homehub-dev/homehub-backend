@@ -1280,6 +1280,7 @@ dependencies = [
  "anyhow",
  "sea-orm",
  "serde",
+ "serde_json",
  "tokio",
  "url",
 ]

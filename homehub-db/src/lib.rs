@@ -1,4 +1,5 @@
 mod entities;
+pub mod extra_models;
 pub mod queries;
 pub use entities::prelude::*;
 pub use entities::*;

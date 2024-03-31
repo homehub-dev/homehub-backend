@@ -88,14 +88,14 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(DeriveIden)]
-enum Light {
+pub(crate) enum Light {
     Table,
     Id,
     Name,
     State,
 }
 #[derive(DeriveIden)]
-struct LightStateEnum;
+pub(crate) struct LightStateEnum;
 
 #[derive(DeriveIden, EnumIter)]
 pub enum LightStateVariants {
